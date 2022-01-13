@@ -3,24 +3,22 @@ name: Deploy to PyPI
 on:
   push:
     tags: 
-      - v*
+      - '*.*.*'
 
 jobs:
   ci:
-    runs-on: 'ubuntu-21.10'
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
         with:
-          python-version: '3.9'
-      - name: Run image
-        uses: abatilo/actions-poetry@v2.0.0
-        with:
-          poetry-version: '1.1.12'
-      - name: Poetry Build
-        run: poetry build
-      - name: Poetry Publish
-        env:
-          PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        run: poetry publish -u $(PYPI_USERNAME) -p $(PYPI_PASSWORD)
+          python-version: 3.9
+      - name: Install Poetry
+        run: curl -sL https://install.python-poetry.org | python - -y
+      - name: Install poetry dependencies & create virtualenv
+        run: poetry install
+      - name: Publish to PyPI
+        run: |
+          poetry config http-basic.pypi "__token__" "${{ secrets.PYPI_TOKEN }}"	
+          poetry publish --build
