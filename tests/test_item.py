@@ -97,3 +97,9 @@ def test_fetch_items_and_delete():
 def test_fetch_group_ids():
     for group_id in ItemExample.fetch_group_ids():
         assert group_id in ["topics", "group_title"]
+
+
+def test_set_values_from_init():
+    item = ItemExample(status_example=1, checkbox_example=True)
+    assert item.status_example == 1
+    assert item.checkbox_example == True

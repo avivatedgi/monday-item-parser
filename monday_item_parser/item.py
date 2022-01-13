@@ -184,9 +184,6 @@ class Item(metaclass=ItemMeta):
         for name, field in self:
             setattr(self, name, copy.deepcopy(field))
 
-        # Make sure no one can update this item attributes after the instanciation
-        self._frozen = True
-
         for k, v in kwargs.items():
             if k not in self._field_names:
                 raise ValueError(
@@ -194,6 +191,9 @@ class Item(metaclass=ItemMeta):
                 )
 
             setattr(self, k, v)
+
+        # Make sure no one can update this item attributes after the instanciation
+        self._frozen = True
 
         super().__init__()
 

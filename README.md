@@ -19,6 +19,7 @@ pip install monday-item-parser
 
 ## Changelog
 
+* 0.1.2 - Fixed a small bug in the `Item::__init__` function
 * 0.1.1 - Still first release, but got some problems with PyPI
 * 0.1.0 - First release
 
