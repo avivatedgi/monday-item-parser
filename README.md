@@ -1,5 +1,7 @@
 # [Monday Item Parser](https://github.com/avivatedgi/monday-item-parser)
 
+[![Tests](https://github.com/avivatedgi/monday-item-parser/actions/workflows/tests.yml/badge.svg)](https://github.com/avivatedgi/monday-item-parser/actions/workflows/tests.yml) [![PyPI version](https://badge.fury.io/py/monday-item-parser.svg)](https://badge.fury.io/py/monday-item-parser)
+
 ## Introduction
 
 [Monday Item Parser](https://github.com/avivatedgi/monday-item-parser) is a library used to define [Monday](www.monday.com) items structure in a specific board, and lets the user fetch, create, update and delete items from this board.
