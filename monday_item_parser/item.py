@@ -243,12 +243,14 @@ class Item(metaclass=ItemMeta):
         :return:        None
         """
 
-        if self._frozen and key in self._field_names:
+        if key in self._field_names and not isinstance(value, Field):
+            getattr(self, key).value = value
+        elif hasattr(self, key) or not self._frozen:
+            super().__setattr__(key, value)
+        else:
             raise AttributeError(
                 f"Monday fields attributes can not be changed! ({self.__class__.__qualname__}:{key})"
             )
-        else:
-            super().__setattr__(key, value)
 
     @property
     def item_id(self):

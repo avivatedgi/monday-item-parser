@@ -1,17 +1,20 @@
+from dataclasses import dataclass
 from typing import Dict
+
 from .field import Field
 from .helpers import get_available_countries
 
 
-class PhoneField(Field):
-    __monday_field_type__ = "phone"
+@dataclass
+class Phone:
+    phone: str = None
 
-    def __init__(self, default: str = None, country_code: str = None):
-        self.value = default
-        self.country_code = country_code
+    def __init__(self, **kwargs):
+        self.phone = kwargs.pop("phone", None)
+        self.country_code = kwargs.pop("country_code", None)
 
     @property
-    def country_code(self):
+    def country_code(self) -> str:
         return self._country_code
 
     @country_code.setter
@@ -28,20 +31,27 @@ class PhoneField(Field):
 
         self._country_code = country_code
 
+    def __str__(self) -> str:
+        country_code = "({}) ".format(self.country_code) if self.country_code else ""
+        return "{}{}".format(country_code, self.phone)
+
+
+class PhoneField(Field):
+    __monday_field_type__ = "phone"
+
+    def __init__(self, *args, **kwargs):
+        self.value: Phone = Phone(*args, **kwargs)
+
     def to_monday_dict(self):
         return (
             {
-                "phone": self.value,
-                "countryShortName": self.country_code,
+                "phone": self.value.phone,
+                "countryShortName": self.value.country_code,
             }
             if self.value
             else {}
         )
 
     def from_monday_dict(self, data: Dict[str, str]):
-        self.value = data["phone"] if data else None
-        self.country_code = data["countryShortName"] if data else None
-
-    def __str__(self):
-        country_code = " ({})".format(self.country_code)
-        return "{}{}".format(self.value, country_code if country_code else "")
+        self.value.phone = data["phone"] if data else None
+        self.value.country_code = data["countryShortName"] if data else None

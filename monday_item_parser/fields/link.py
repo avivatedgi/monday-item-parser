@@ -1,26 +1,27 @@
+from dataclasses import dataclass
 from typing import Any, Dict
 
 from .field import Field
 
 
+@dataclass
+class Link:
+    url: str = None
+    text: str = None
+
+    def __str__(self):
+        return "{} ({})".format(self.text, self.url)
+
+
 class LinkField(Field):
     __monday_field_type__ = "link"
 
-    def __init__(self, default: str = None, text: str = None):
-        self.value = default
-        self.text = text
-
-    @property
-    def text(self):
-        return self._text
-
-    @text.setter
-    def text(self, text: str):
-        self._text = text
+    def __init__(self, *args, **kwargs):
+        self.value: Link = Link(*args, **kwargs)
 
     def to_monday_dict(self):
-        return {"url": self.value, "text": self.text} if self.value else {}
+        return {"url": self.value.url, "text": self.value.text} if self.value else {}
 
     def from_monday_dict(self, data: Dict[str, Any]):
-        self.value = data["url"] if data else None
-        self.text = data["text"] if data else None
+        self.value.url = data["url"] if data else None
+        self.value.text = data["text"] if data else None

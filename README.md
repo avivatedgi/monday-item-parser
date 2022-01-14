@@ -19,9 +19,10 @@ pip install monday-item-parser
 
 ## Changelog
 
-* 0.1.2 - Fixed a small bug in the `Item::__init__` function
-* 0.1.1 - Still first release, but got some problems with PyPI
-* 0.1.0 - First release
+* 0.2.0 (2021-01-14) - Updated the item's field value set method to be explicit (without calling `.value`)
+* 0.1.2 (2021-01-13) - Fixed a small bug in the `Item::__init__` function
+* 0.1.1 (2021-01-13) - Still first release, but got some problems with PyPI and Github Workflows
+* 0.1.0 (2021-01-13) - First release
 
 ## How to use
 
@@ -80,7 +81,7 @@ class MyItem(Item, board_id=board_id, monday_client=monday_client):
 
 ```pycon
 >>> new_item.name = 'Updated Item'
->>> new_item.checkbox_example.value = False
+>>> new_item.checkbox_example = False
 >>> new_item.update_item()
 ```
 
@@ -121,6 +122,60 @@ Field is actually an Monday board's item column. The currently supported types a
 | Text | `TextField` |
 | Timeline | `TimelineField` |
 
+#### Full Example
+
+```python
+class ItemExample(Item, monday_client=client, board_id=testing_board_id):
+    status_example = StatusField
+    date_example = DateField
+    checkbox_example = CheckboxField
+    country_example = CountryField
+    email_example = EmailField
+    link_example = LinkField
+    numbers_example = NumberField
+    people_example = PeopleField
+    phone_example = PhoneField
+    tags_example = TagsField
+    text_example = TextField
+    timeline_example = TimelineField
+
+item = ItemExample()
+
+# Setting the values of an item
+item.item_name = "Aviv Atedgi"
+item.status_example = "Working on it"
+item.date_example = datetime.now()
+item.checkbox_example = True
+item.country_example = "IL"
+item.email_example = "aviv.atedgi2000@gmail.com"
+item.link_example.url = "https://www.github.com/avivatedgi"
+item.link_example.text = "My Github Profile"
+item.numbers_example = 192.4
+item.people_example = [Person(25200525)]
+item.phone_example.country_code = "IL"
+item.phone_example.phone = "0501234567"
+item.tags_example = [12808387]
+item.text_example = "My Cool Text Example"
+item.timeline_example.start = datetime.strptime("2000-05-01", "%Y-%m-%d")
+item.timeline_example.end = datetime.now()
+
+# Getting the values of an item
+print("Status Example =", item.status_example.value)
+print("Date Example =", item.date_example.value)
+print("Checkbox Example =", item.checkbox_example.value)
+print("Country Example =", item.country_example.value)
+print("Email Example =", item.email_example.value)
+print("Link Example URL =", item.link_example.value.url)
+print("Link Example Text =", item.link_example.value.text)
+print("Numbers Example =", item.numbers_example.value)
+print("People Example =", item.people_example.value)
+print("Phone Example Country Code =", item.phone_example.value.country_code)
+print("Phone Example Phone Number =", item.phone_example.value.phone)
+print("Tags Example =", item.tags_example.value)
+print("Text Example =", item.text_example.value)
+print("Timeline Example Start Date =", item.timeline_example.value.start)
+print("Timeline Example End Date =", item.timeline_example.value.end)
+```
 
 ## Special Thanks
 
