@@ -19,6 +19,7 @@ pip install monday-item-parser
 
 ## Changelog
 
+* 0.2.1 (2021-01-16) - Added hooks for field values.
 * 0.2.0 (2021-01-14) - Updated the item's field value set method to be explicit (without calling `.value`)
 * 0.1.2 (2021-01-13) - Fixed a small bug in the `Item::__init__` function
 * 0.1.1 (2021-01-13) - Still first release, but got some problems with PyPI and Github Workflows
@@ -102,13 +103,38 @@ class MyItem(Item, board_id=board_id, monday_client=monday_client):
 "group_title"
 ```
 
+#### Hook Field Values
+
+A hook can be registered for whenever the value on a specific field is changed.
+
+```python
+from monday_item_parser import *
+
+class ItemWithFieldHook(Item, monday_client=client, board_id=testing_board_id):
+    status_example = StatusField
+    checkbox_example = CheckboxField
+
+    @field_updated_hook(status_example)
+    def status_example_hook(self):
+        if self.status_example.value is not None:
+            # In the hook you must update the value with the
+            # `.value` attribute if you don't want to trigger the hook again
+            self.status_example.value += 1
+        else:
+            self.status_example.value = 0
+
+item = ItemWithFieldHook()
+# Trigger the hook by setting the value WITHOUT the `.value` attribute
+item.status_example = 5
+assert item.status_example.value == 6
+```
+
 ### Fields
 
 Field is actually an Monday board's item column. The currently supported types are:
 
-
 | Monday Column Type | Library Class Name |
-| ------------------ | ------------------ | 
+| ------------------ | ------------------ |
 | Checkbox | `CheckboxField` |
 | Country | `CountryField` |
 | Date | `DateField` |

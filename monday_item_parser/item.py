@@ -244,7 +244,20 @@ class Item(metaclass=ItemMeta):
         """
 
         if key in self._field_names and not isinstance(value, Field):
-            getattr(self, key).value = value
+            # Update the value of the field and invoke the hooks
+            field = getattr(self, key)
+            field.value = value
+            self.invoke_field_update_hooks(field)
+        elif key in self._field_names:
+            # Overriding the field so we must save the hooks attribute and set them
+            # after we update the field
+            field = getattr(self, key)
+            hooks = getattr(field, "_value_update_hooks", [])
+            super().__setattr__(key, value)
+            setattr(field, "_value_update_hooks", hooks)
+
+            # Invoke the field hooks because the value has been changed
+            self.invoke_field_update_hooks(field)
         elif hasattr(self, key) or not self._frozen:
             super().__setattr__(key, value)
         else:
@@ -404,3 +417,19 @@ class Item(metaclass=ItemMeta):
         groups_data = cls._monday_client.groups.get_groups_by_board([cls._board_id])
         for group in groups_data["data"]["boards"][0]["groups"]:
             yield group["id"]
+
+    def invoke_field_update_hooks(self, field: Field):
+        for f in getattr(field, "_value_update_hooks", ()):
+            f(self)
+
+    @classmethod
+    def field_updated_hook(cls, field):
+        def register_field_hook(func: callable):
+            if hasattr(field, "_value_update_hooks"):
+                field._value_update_hooks.append(func)
+            else:
+                field._value_update_hooks = [func]
+
+            return func
+
+        return register_field_hook

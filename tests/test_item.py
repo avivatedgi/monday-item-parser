@@ -52,6 +52,24 @@ def test_add_attribute():
         item.new_attribute_should_fail = StatusField()
 
 
+def test_item_update_hook():
+    class ItemWithFieldHook(Item, monday_client=client, board_id=testing_board_id):
+        status_example = StatusField
+
+        @field_updated_hook(status_example)
+        def status_example_hook(self):
+            if self.status_example.value is not None:
+                self.status_example.value += 1
+            else:
+                self.status_example.value = 0
+
+    item = ItemWithFieldHook()
+    item.status_example.value = 5
+    assert item.status_example.value == 5
+    item.status_example = 5
+    assert item.status_example.value == 6
+
+
 def test_set_values_from_init():
     item = ItemExample(status_example=1, checkbox_example=True)
     assert item.status_example.value == 1
