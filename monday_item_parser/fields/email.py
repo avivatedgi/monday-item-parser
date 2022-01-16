@@ -14,3 +14,6 @@ class EmailField(Field):
 
     def from_monday_dict(self, data: Dict[str, str]):
         self.value = data["email"] if data else None
+
+    def search_representation(self) -> str:
+        return str(self.value)

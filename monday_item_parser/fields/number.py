@@ -16,3 +16,6 @@ class NumberField(Field):
 
     def from_monday_dict(self, data: Union[int, float]):
         self.value = json.loads(data) if data else None
+
+    def search_representation(self) -> str:
+        return str(self.value)

@@ -4,7 +4,7 @@ from datetime import datetime
 from monday import MondayClient
 from monday_item_parser import *
 
-from .helpers import client, testing_board_id
+from .helpers import client, testing_board_id, retry_in_case_of_budget_exhausted
 
 
 def test_item_invalid_decleration():
@@ -26,7 +26,7 @@ def test_item_invalid_decleration_ignored():
 
 class ItemExample(Item, monday_client=client, board_id=testing_board_id):
     status_example = StatusField
-    date_example = DateField
+    date_example = DateField(include_time=False)
     checkbox_example = CheckboxField
     country_example = CountryField
     email_example = EmailField
@@ -80,7 +80,7 @@ def test_create_item_then_duplicate_it_and_update_it():
     item = ItemExample()
     item.item_name = "Aviv Atedgi"
     item.status_example = "Working on it"
-    item.date_example = datetime.now()
+    item.date_example = datetime.strptime("2000-05-01", "%Y-%m-%d")
     item.checkbox_example = True
     item.country_example = "IL"
     item.email_example = "aviv.atedgi2000@gmail.com"
@@ -94,7 +94,7 @@ def test_create_item_then_duplicate_it_and_update_it():
     item.text_example = "My Cool Text Example"
     item.timeline_example.start = datetime.strptime("2000-05-01", "%Y-%m-%d")
     item.timeline_example.end = datetime.now()
-    item.create_item("topics")
+    retry_in_case_of_budget_exhausted(lambda: item.create_item("topics"))
 
     new_item = item.duplicate_item()
     new_item.item_name = "Omri Siniver"
@@ -113,14 +113,47 @@ def test_create_item_then_duplicate_it_and_update_it():
         start=datetime.strptime("2005-04-12", "%Y-%m-%d"),
         end=datetime.now(),
     )
-    new_item.update_item()
+    retry_in_case_of_budget_exhausted(new_item.update_item)
+
+
+@pytest.mark.parametrize(
+    "column_id,column_value",
+    [
+        ("status_example", "Stuck"),
+        ("date_example", datetime.now()),
+        # ("checkbox_example", None), # Unsupported field
+        ("country_example", "US"),
+        ("email_example", "omrisiniver@gmail.com"),
+        ("link_example", Link(text="Google It")),
+        ("numbers_example", 154),
+        ("phone_example", Phone(phone="12123123123")),
+        ("text_example", "YES"),
+        (
+            "timeline_example",
+            Timeline(
+                start=datetime.strptime("2005-04-12", "%Y-%m-%d"),
+                end=datetime.now(),
+            ),
+        ),
+    ],
+)
+def test_get_items_by_column_value(column_id, column_value):
+    x = retry_in_case_of_budget_exhausted(
+        lambda: ItemExample.fetch_items_by_column_value(**{column_id: column_value})
+    )
+
+    assert (
+        retry_in_case_of_budget_exhausted(lambda: next(x)).item_name == "Omri Siniver"
+    )
+    with pytest.raises(StopIteration):
+        retry_in_case_of_budget_exhausted(lambda: next(x))
 
 
 def test_fetch_items_and_delete():
-    for item in ItemExample.fetch_items_from_board():
-        item.delete_item()
+    for item in retry_in_case_of_budget_exhausted(ItemExample.fetch_items_from_board):
+        retry_in_case_of_budget_exhausted(item.delete_item)
 
 
 def test_fetch_group_ids():
-    for group_id in ItemExample.fetch_group_ids():
+    for group_id in retry_in_case_of_budget_exhausted(ItemExample.fetch_group_ids):
         assert group_id in ["topics", "group_title"]

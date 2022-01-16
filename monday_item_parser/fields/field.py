@@ -25,6 +25,21 @@ class Field(abc.ABC):
 
         raise NotImplementedError
 
+    def search_representation(self) -> str:
+        """
+        Returns the representation of the value as it should be when we want to search it
+        by the items by column values query
+        (Read more at https://api.developer.monday.com/docs/items-by-column-values-queries)
+
+        Only classes that will implement this function can be used by the `Item::fetch_items_by_column_value` function.
+        """
+
+        raise AttributeError(
+            "items_by_column_value is not supported for {}".format(
+                self.__class__.__qualname__
+            )
+        )
+
     @property
     def value(self) -> Any:
         """

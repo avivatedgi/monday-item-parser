@@ -55,3 +55,6 @@ class PhoneField(Field):
     def from_monday_dict(self, data: Dict[str, str]):
         self.value.phone = data["phone"] if data else None
         self.value.country_code = data["countryShortName"] if data else None
+
+    def search_representation(self) -> str:
+        return str(self.value.phone)

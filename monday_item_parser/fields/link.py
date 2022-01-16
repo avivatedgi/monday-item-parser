@@ -25,3 +25,6 @@ class LinkField(Field):
     def from_monday_dict(self, data: Dict[str, Any]):
         self.value.url = data["url"] if data else None
         self.value.text = data["text"] if data else None
+
+    def search_representation(self) -> str:
+        return str(self.value.text)

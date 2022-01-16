@@ -14,3 +14,6 @@ class TextField(Field):
 
     def from_monday_dict(self, data: str):
         self.value = data if data else None
+
+    def search_representation(self) -> str:
+        return str(self.value)

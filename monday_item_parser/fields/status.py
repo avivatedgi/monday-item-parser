@@ -35,3 +35,11 @@ class StatusField(Field):
 
         field_name = StatusField.__type_to_field_name__[type(self.value)]
         return f"{field_name}: {self.value}"
+
+    def search_representation(self) -> str:
+        if not self.value:
+            raise ValueError("Can not search statuses by empty value")
+        elif isinstance(self.value, int):
+            raise TypeError("Can not search statuses by indexes, only by labels")
+
+        return str(self.value)

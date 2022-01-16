@@ -42,3 +42,9 @@ class TimelineField(Field):
             start=datetime.strptime(data["from"], "%Y-%m-%d"),
             end=datetime.strptime(data["to"], "%Y-%m-%d"),
         )
+
+    def search_representation(self) -> str:
+        return "{} - {}".format(
+            self.value.start.strftime("%Y-%m-%d"),
+            self.value.end.strftime("%Y-%m-%d"),
+        )

@@ -19,6 +19,9 @@ class CountryField(Field):
     def from_monday_dict(self, data: Dict[str, Any]):
         self.value = data["countryCode"] if data else None
 
+    def search_representation(self) -> str:
+        return str(self.value)
+
     @Field.value.setter
     def value(self, country_code: str):
         if not country_code:

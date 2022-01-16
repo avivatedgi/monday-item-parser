@@ -19,6 +19,7 @@ pip install monday-item-parser
 
 ## Changelog
 
+* 0.2.2 (2021-01-16) - Added support for [search items by column value](https://api.developer.monday.com/docs/items-by-column-values-queries)
 * 0.2.1 (2021-01-16) - Added hooks for field values.
 * 0.2.0 (2021-01-14) - Updated the item's field value set method to be explicit (without calling `.value`)
 * 0.1.2 (2021-01-13) - Fixed a small bug in the `Item::__init__` function
@@ -57,6 +58,30 @@ class MyItem(Item, board_id=board_id, monday_client=monday_client):
 ```
 
 ![Items Preview](docs/images/items-print.png)
+
+#### Fetch items by column value
+
+You can fetch all of the items from board by a specific column value filter.
+
+```python
+# Let's filter all of the items with a Status column named "status_example" that holds the label "Done"
+for item in ExampleItem.fetch_items_by_column_value(status_example="Done"):
+    print(item)
+```
+
+More info about supported and unsupported fields you can search by [here](https://api.developer.monday.com/docs/items-by-column-values-queries).
+
+| Field Type | Field Value to Search By |
+| ---------- | ------------------------ |
+| Text | `str` The text to search |
+| Status | `str` The label to search |
+| Numbers | Either `int` or `float`. The value to search |
+| Date | `datetime.datetime` The date (year, month and day) to search by |
+| Phone | `Phone` (internal library class) The phone number to search by |
+| Country | `str` The country code to search by |
+| Email | `str` The email to search by |
+| Timeline | `Timeline` (internal library class) The start and end date to search by |
+| Link | `Link` (internal library class) The display text (not the actual url link) to search by |
 
 #### Create Item
 

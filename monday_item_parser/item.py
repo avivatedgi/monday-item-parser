@@ -10,6 +10,7 @@ from monday import MondayClient
 
 from .helpers import as_type, as_obj
 from .fields import Field
+from .exceptions import MondayClientError
 
 
 class ItemMeta(type):
@@ -307,17 +308,10 @@ class Item(metaclass=ItemMeta):
         response = self._monday_client.items.create_item(
             self._board_id, group_id, self._unsaved_item_name, column_values
         )
+        self.raise_monday_errors(response)
 
         # Validate that the creation succeed
-        try:
-            self._item_id = response["data"]["create_item"]["id"]
-        except KeyError:
-            raise ValueError(
-                "Failed to create item ({}) for board {}, group {}".format(
-                    self.__class__.__qualname__, self._board_id, group_id
-                ),
-                response,
-            )
+        self._item_id = response["data"]["create_item"]["id"]
 
         # Update the backup so it will hold those values now
         for field_name, field in self:
@@ -351,9 +345,10 @@ class Item(metaclass=ItemMeta):
             column_values["name"] = self._unsaved_item_name
 
         # Update the item in the monday board
-        self._monday_client.items.change_multiple_column_values(
+        data = self._monday_client.items.change_multiple_column_values(
             self._board_id, self.item_id, column_values
         )
+        self.raise_monday_errors(data)
 
         # Update the name of the item
         if self._unsaved_item_name:
@@ -370,7 +365,8 @@ class Item(metaclass=ItemMeta):
                 "Can not update an item that wasn't fetch from the server. Did you mean `create_item`?"
             )
 
-        self._monday_client.items.delete_item_by_id(self.item_id)
+        data = self._monday_client.items.delete_item_by_id(self.item_id)
+        self.raise_monday_errors(data)
 
         self._unsaved_item_name = None
         self._item_id = None
@@ -409,8 +405,42 @@ class Item(metaclass=ItemMeta):
     @classmethod
     def fetch_items_from_board(cls) -> Iterator[Item]:
         board_data = cls._monday_client.boards.fetch_items_by_board_id([cls._board_id])
+
+        cls.raise_monday_errors(board_data)
+
         for item in board_data["data"]["boards"][0]["items"]:
             yield cls.from_monday_dictionary(item)
+
+    @classmethod
+    def fetch_items_by_column_value(cls, **kwargs):
+        field_name, field_value = next(iter(kwargs.items()))
+
+        if field_name not in cls._monday_field_names:
+            raise AttributeError("Invalid field to search by {}".format(field_name))
+
+        monday_id = cls._monday_field_names[field_name]
+        field_copy = copy.deepcopy(getattr(cls, field_name))
+        field_copy.value = field_value
+        data = field_copy.search_representation()
+
+        items_data = cls._monday_client.items.fetch_items_by_column_value(
+            cls._board_id, monday_id, data
+        )
+
+        cls.raise_monday_errors(items_data)
+
+        for item in items_data["data"]["items_by_column_values"]:
+            yield cls.from_monday_dictionary(item)
+
+    @staticmethod
+    def raise_monday_errors(response):
+        if isinstance(response, dict) and "errors" in response:
+            errors = [
+                error["message"] if "message" in error else error
+                for error in response["errors"]
+            ]
+
+            raise MondayClientError("Got error from monday client", errors)
 
     @classmethod
     def fetch_group_ids(cls) -> Iterator[str]:
