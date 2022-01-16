@@ -8,9 +8,8 @@ from bidict import bidict
 from typing import Any, Dict, Iterable, Iterator, List, Optional
 from monday import MondayClient
 
-from .helpers import as_type, as_obj
+from .helpers import as_type, as_obj, raise_monday_errors
 from .fields import Field
-from .exceptions import MondayClientError
 
 
 class ItemMeta(type):
@@ -90,6 +89,10 @@ class ItemMeta(type):
         attributes["_monday_field_names"] = bidict()
 
         board_data = monday_client.boards.fetch_boards_by_id([board_id])
+
+        # Check if the request succeed
+        raise_monday_errors(board_data)
+
         for field_data in board_data["data"]["boards"][0]["columns"]:
             # Replace the field name from the monday board to be lowercase
             # and replace spaces into underscores
@@ -308,7 +311,9 @@ class Item(metaclass=ItemMeta):
         response = self._monday_client.items.create_item(
             self._board_id, group_id, self._unsaved_item_name, column_values
         )
-        self.raise_monday_errors(response)
+
+        # Check if the request succeed
+        raise_monday_errors(response)
 
         # Validate that the creation succeed
         self._item_id = response["data"]["create_item"]["id"]
@@ -348,7 +353,7 @@ class Item(metaclass=ItemMeta):
         data = self._monday_client.items.change_multiple_column_values(
             self._board_id, self.item_id, column_values
         )
-        self.raise_monday_errors(data)
+        raise_monday_errors(data)
 
         # Update the name of the item
         if self._unsaved_item_name:
@@ -366,7 +371,9 @@ class Item(metaclass=ItemMeta):
             )
 
         data = self._monday_client.items.delete_item_by_id(self.item_id)
-        self.raise_monday_errors(data)
+
+        # Check if the request succeed
+        raise_monday_errors(data)
 
         self._unsaved_item_name = None
         self._item_id = None
@@ -406,7 +413,7 @@ class Item(metaclass=ItemMeta):
     def fetch_items_from_board(cls) -> Iterator[Item]:
         board_data = cls._monday_client.boards.fetch_items_by_board_id([cls._board_id])
 
-        cls.raise_monday_errors(board_data)
+        raise_monday_errors(board_data)
 
         for item in board_data["data"]["boards"][0]["items"]:
             yield cls.from_monday_dictionary(item)
@@ -423,28 +430,26 @@ class Item(metaclass=ItemMeta):
         field_copy.value = field_value
         data = field_copy.search_representation()
 
+        print("{} = {}".format(monday_id, data))
+
         items_data = cls._monday_client.items.fetch_items_by_column_value(
             cls._board_id, monday_id, data
         )
 
-        cls.raise_monday_errors(items_data)
+        # Check if the request succeed
+        raise_monday_errors(items_data)
 
+        print(items_data)
         for item in items_data["data"]["items_by_column_values"]:
             yield cls.from_monday_dictionary(item)
-
-    @staticmethod
-    def raise_monday_errors(response):
-        if isinstance(response, dict) and "errors" in response:
-            errors = [
-                error["message"] if "message" in error else error
-                for error in response["errors"]
-            ]
-
-            raise MondayClientError("Got error from monday client", errors)
 
     @classmethod
     def fetch_group_ids(cls) -> Iterator[str]:
         groups_data = cls._monday_client.groups.get_groups_by_board([cls._board_id])
+
+        # Check if the request succeed
+        raise_monday_errors(groups_data)
+
         for group in groups_data["data"]["boards"][0]["groups"]:
             yield group["id"]
 

@@ -19,6 +19,7 @@ pip install monday-item-parser
 
 ## Changelog
 
+
 * 0.2.3 (2021-01-16) - Same as 0.2.2, but got some problems with PyPI and Github Workflows again. :(
 * 0.2.2 (2021-01-16) - Added support for [search items by column value](https://api.developer.monday.com/docs/items-by-column-values-queries)
 * 0.2.1 (2021-01-16) - Added hooks for field values.
@@ -200,16 +201,22 @@ item.date_example = datetime.now()
 item.checkbox_example = True
 item.country_example = "IL"
 item.email_example = "aviv.atedgi2000@gmail.com"
-item.link_example.url = "https://www.github.com/avivatedgi"
-item.link_example.text = "My Github Profile"
+item.link_example.value.url = "https://www.github.com/avivatedgi"
+item.link_example.value.text = "My Github Profile"
+item.link_example = LinkField(url="https://www.google.com", text="Google It")
 item.numbers_example = 192.4
 item.people_example = [Person(25200525)]
-item.phone_example.country_code = "IL"
-item.phone_example.phone = "0501234567"
+item.phone_example.value.country_code = "IL"
+item.phone_example.value.phone = "0501234567"
+item.phone_example = PhoneField(phone="12123123123", country_code="US")
 item.tags_example = [12808387]
 item.text_example = "My Cool Text Example"
-item.timeline_example.start = datetime.strptime("2000-05-01", "%Y-%m-%d")
-item.timeline_example.end = datetime.now()
+item.timeline_example.value.start = datetime.strptime("2000-05-01", "%Y-%m-%d")
+item.timeline_example.value.end = datetime.now()
+item.timeline_example = TimelineField(
+    start=datetime.strptime("2005-04-12", "%Y-%m-%d"),
+    end=datetime.now(),
+)
 
 # Getting the values of an item
 print("Status Example =", item.status_example.value)
