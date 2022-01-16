@@ -1,6 +1,6 @@
 # [Monday Item Parser](https://github.com/avivatedgi/monday-item-parser)
 
-[![Deploy to PyPI](https://github.com/avivatedgi/monday-item-parser/actions/workflows/deploy_pypi.yml/badge.svg)](https://github.com/avivatedgi/monday-item-parser/actions/workflows/deploy_pypi.yml) [![PyPI version](https://badge.fury.io/py/monday-item-parser.svg)](https://badge.fury.io/py/monday-item-parser)
+[![Tests & Deploy to PyPI](https://github.com/avivatedgi/monday-item-parser/actions/workflows/deploy_pypi.yml/badge.svg)](https://github.com/avivatedgi/monday-item-parser/actions/workflows/deploy_pypi.yml) [![PyPI version](https://badge.fury.io/py/monday-item-parser.svg)](https://badge.fury.io/py/monday-item-parser)
 
 ## Introduction
 
