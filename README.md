@@ -1,6 +1,6 @@
 # [Monday Item Parser](https://github.com/avivatedgi/monday-item-parser)
 
-[![Tests](https://github.com/avivatedgi/monday-item-parser/actions/workflows/tests.yml/badge.svg)](https://github.com/avivatedgi/monday-item-parser/actions/workflows/tests.yml) [![PyPI version](https://badge.fury.io/py/monday-item-parser.svg)](https://badge.fury.io/py/monday-item-parser)
+[![Deploy to PyPI](https://github.com/avivatedgi/monday-item-parser/actions/workflows/deploy_pypi.yml/badge.svg)](https://github.com/avivatedgi/monday-item-parser/actions/workflows/deploy_pypi.yml) [![PyPI version](https://badge.fury.io/py/monday-item-parser.svg)](https://badge.fury.io/py/monday-item-parser)
 
 ## Introduction
 
@@ -19,6 +19,7 @@ pip install monday-item-parser
 
 ## Changelog
 
+* 0.2.3 (2021-01-16) - Same as 0.2.2, but got some problems with PyPI and Github Workflows again. :(
 * 0.2.2 (2021-01-16) - Added support for [search items by column value](https://api.developer.monday.com/docs/items-by-column-values-queries)
 * 0.2.1 (2021-01-16) - Added hooks for field values.
 * 0.2.0 (2021-01-14) - Updated the item's field value set method to be explicit (without calling `.value`)

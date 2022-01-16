@@ -1,4 +1,4 @@
-name: Deploy to PyPI
+name: Tests & Deploy to PyPI
 
 on:
   push:
@@ -18,6 +18,11 @@ jobs:
         run: curl -sL https://install.python-poetry.org | python - -y
       - name: Install poetry dependencies & create virtualenv
         run: poetry install
+      - name: Run Tests
+        env:
+          MONDAY_API_KEY: ${{ secrets.MONDAY_API_KEY }}
+          MONDAY_TESTING_BOARD_ID: ${{ secrets.MONDAY_TESTING_BOARD_ID }}
+        run: poetry run pytest tests
       - name: Publish to PyPI
         run: |
           poetry config http-basic.pypi "__token__" "${{ secrets.PYPI_TOKEN }}"	
