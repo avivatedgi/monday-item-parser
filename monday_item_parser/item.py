@@ -430,8 +430,6 @@ class Item(metaclass=ItemMeta):
         field_copy.value = field_value
         data = field_copy.search_representation()
 
-        print("{} = {}".format(monday_id, data))
-
         items_data = cls._monday_client.items.fetch_items_by_column_value(
             cls._board_id, monday_id, data
         )
@@ -439,7 +437,6 @@ class Item(metaclass=ItemMeta):
         # Check if the request succeed
         raise_monday_errors(items_data)
 
-        print(items_data)
         for item in items_data["data"]["items_by_column_values"]:
             yield cls.from_monday_dictionary(item)
 
