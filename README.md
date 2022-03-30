@@ -19,7 +19,7 @@ pip install monday-item-parser
 
 ## Changelog
 
-
+* 0.2.5 (2022-03-30) - Added mirror field to readme.
 * 0.2.4 (2022-03-30) - Added support for mirror (lookup) fields.
 * 0.2.3 (2021-01-16) - Same as 0.2.2, but got some problems with PyPI and Github Workflows again. :(
 * 0.2.2 (2021-01-16) - Added support for [search items by column value](https://api.developer.monday.com/docs/items-by-column-values-queries)
@@ -85,6 +85,7 @@ More info about supported and unsupported fields you can search by [here](https:
 | Email | `str` The email to search by |
 | Timeline | `Timeline` (internal library class) The start and end date to search by |
 | Link | `Link` (internal library class) The display text (not the actual url link) to search by |
+| Mirror | `str` The text to search |
 
 #### Create Item
 
@@ -175,6 +176,7 @@ Field is actually an Monday board's item column. The currently supported types a
 | Tags | `TagsField` |
 | Text | `TextField` |
 | Timeline | `TimelineField` |
+| Mirror | `MirrorField` |
 
 #### Full Example
 
@@ -192,6 +194,7 @@ class ItemExample(Item, monday_client=client, board_id=testing_board_id):
     tags_example = TagsField
     text_example = TextField
     timeline_example = TimelineField
+	mirror_example = MirrorField
 
 item = ItemExample()
 
@@ -235,6 +238,7 @@ print("Tags Example =", item.tags_example.value)
 print("Text Example =", item.text_example.value)
 print("Timeline Example Start Date =", item.timeline_example.value.start)
 print("Timeline Example End Date =", item.timeline_example.value.end)
+print("Mirror Example = ", item.mirror_example.value)
 ```
 
 ## Special Thanks

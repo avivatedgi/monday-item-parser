@@ -387,8 +387,6 @@ class Item(metaclass=ItemMeta):
         obj._unsaved_item_name = None
         obj._group_id = data["group"]["id"]
 
-        print(data["column_values"])
-
         for column_data in data["column_values"]:
             monday_id = column_data["id"]
 
