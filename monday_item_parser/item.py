@@ -5,6 +5,7 @@ import inspect
 import json
 
 from bidict import bidict
+from contextlib import suppress
 from typing import Any, Dict, Iterable, Iterator, List, Optional
 from monday import MondayClient
 
@@ -386,6 +387,8 @@ class Item(metaclass=ItemMeta):
         obj._unsaved_item_name = None
         obj._group_id = data["group"]["id"]
 
+        print(data["column_values"])
+
         for column_data in data["column_values"]:
             monday_id = column_data["id"]
 
@@ -395,10 +398,19 @@ class Item(metaclass=ItemMeta):
 
             attribute_name = obj._monday_field_names.inverse[monday_id]
 
+            column_value = None
+            using_text = False
+
+            with suppress(AttributeError):
+                if getattr(obj, attribute_name).__use_text_instead_of_value__:
+                    using_text = True
+                    column_value = column_data["text"] if column_data["text"] else None
+
             # Load the data from the monday dictionary
-            column_value = (
-                json.loads(column_data["value"]) if column_data["value"] else None
-            )
+            if not using_text:
+                column_value = (
+                    json.loads(column_data["value"]) if column_data["value"] else None
+                )
 
             getattr(obj, attribute_name).from_monday_dict(column_value)
 

@@ -11,6 +11,7 @@ from .status import StatusField
 from .tags import TagsField
 from .text import TextField
 from .timeline import TimelineField, Timeline
+from .mirror import MirrorField
 
 __all__ = [
     "Field",
@@ -31,4 +32,5 @@ __all__ = [
     "TextField",
     "TimelineField",
     "Timeline",
+    "MirrorField",
 ]
