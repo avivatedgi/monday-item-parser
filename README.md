@@ -19,6 +19,7 @@ pip install monday-item-parser
 
 ## Changelog
 
+* 0.2.6 (2022-03-30) - Bumped version because of workflow problems (again :()
 * 0.2.5 (2022-03-30) - Added mirror field to readme.
 * 0.2.4 (2022-03-30) - Added support for mirror (lookup) fields.
 * 0.2.3 (2021-01-16) - Same as 0.2.2, but got some problems with PyPI and Github Workflows again. :(
