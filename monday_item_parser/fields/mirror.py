@@ -14,7 +14,6 @@ class MirrorField(Field):
         return self.value
 
     def from_monday_dict(self, data: str):
-        print(data)
         self.value = data if data else None
 
     def search_representation(self) -> str:
