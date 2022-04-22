@@ -19,6 +19,7 @@ pip install monday-item-parser
 
 ## Changelog
 
+* 0.2.9 (2022-04-22) - Fixed a bug in Long Text field
 * 0.2.8 (2022-04-22) - Added support for Long Text field
 * 0.2.7 (2022-03-30) - Bumped version because of workflow problems (again :()
 * 0.2.5 (2022-03-30) - Added mirror field to readme.

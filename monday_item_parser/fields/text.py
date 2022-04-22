@@ -26,7 +26,7 @@ class LongTextField(Field):
         self.value = default
 
     def to_monday_dict(self):
-        return self.value
+        return {"text": self.value}
 
     def from_monday_dict(self, data: str):
         self.value = data if data else None
