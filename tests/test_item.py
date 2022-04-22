@@ -43,6 +43,7 @@ class ItemExample(Item, monday_client=client, board_id=testing_board_id):
     tags_example = TagsField
     text_example = TextField
     timeline_example = TimelineField
+    long_text_example = LongTextField
 
 
 def test_change_item_attribute():
@@ -100,6 +101,7 @@ def test_create_item_then_duplicate_it_and_update_it():
     item.text_example = "My Cool Text Example"
     item.timeline_example.value.start = datetime.strptime("2000-05-01", "%Y-%m-%d")
     item.timeline_example.value.end = datetime.now()
+    item.long_text_example.value = "My Cool Long Text Example"
     retry_in_case_of_budget_exhausted(lambda: item.create_item("topics"))
 
     new_item = retry_in_case_of_budget_exhausted(item.duplicate_item)
@@ -119,6 +121,7 @@ def test_create_item_then_duplicate_it_and_update_it():
         start=datetime.strptime("2005-04-12", "%Y-%m-%d"),
         end=datetime.now(),
     )
+    new_item.long_text_example = "Hello\nWorld"
     retry_in_case_of_budget_exhausted(new_item.update_item)
     time.sleep(60)
 
@@ -142,6 +145,7 @@ def test_create_item_then_duplicate_it_and_update_it():
                 end=datetime.now(),
             ),
         ),
+        ("long_text_example", "Hello\nWorld"),
     ],
 )
 def test_get_items_by_column_value(column_id, column_value):
@@ -150,9 +154,7 @@ def test_get_items_by_column_value(column_id, column_value):
 
     while True:
         try:
-            for item in ItemExample.fetch_items_by_column_value(
-                **{column_id: column_value}
-            ):
+            for item in ItemExample.fetch_items_by_column_value(**{column_id: column_value}):
                 last_item = item
                 counter += 1
 

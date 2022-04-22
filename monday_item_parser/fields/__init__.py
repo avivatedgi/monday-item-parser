@@ -9,7 +9,7 @@ from .people import PeopleField, Person, Team
 from .phone import PhoneField, Phone
 from .status import StatusField
 from .tags import TagsField
-from .text import TextField
+from .text import TextField, LongTextField
 from .timeline import TimelineField, Timeline
 from .mirror import MirrorField
 
@@ -30,6 +30,7 @@ __all__ = [
     "StatusField",
     "TagsField",
     "TextField",
+    "LongTextField",
     "TimelineField",
     "Timeline",
     "MirrorField",

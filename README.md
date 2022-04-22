@@ -19,6 +19,7 @@ pip install monday-item-parser
 
 ## Changelog
 
+* 0.2.8 (2022-04-22) - Added support for Long Text field
 * 0.2.7 (2022-03-30) - Bumped version because of workflow problems (again :()
 * 0.2.5 (2022-03-30) - Added mirror field to readme.
 * 0.2.4 (2022-03-30) - Added support for mirror (lookup) fields.
@@ -87,6 +88,7 @@ More info about supported and unsupported fields you can search by [here](https:
 | Timeline | `Timeline` (internal library class) The start and end date to search by |
 | Link | `Link` (internal library class) The display text (not the actual url link) to search by |
 | Mirror | `str` The text to search |
+| Long Text | `str` The text to search |
 
 #### Create Item
 
@@ -178,6 +180,7 @@ Field is actually an Monday board's item column. The currently supported types a
 | Text | `TextField` |
 | Timeline | `TimelineField` |
 | Mirror | `MirrorField` |
+| Long Text | `LongTextField` |
 
 #### Full Example
 
@@ -196,6 +199,7 @@ class ItemExample(Item, monday_client=client, board_id=testing_board_id):
     text_example = TextField
     timeline_example = TimelineField
 	mirror_example = MirrorField
+    long_text_example = LongTextField
 
 item = ItemExample()
 
@@ -222,6 +226,7 @@ item.timeline_example = TimelineField(
     start=datetime.strptime("2005-04-12", "%Y-%m-%d"),
     end=datetime.now(),
 )
+item.long_text_example = "Hello\nWorld"
 
 # Getting the values of an item
 print("Status Example =", item.status_example.value)
@@ -240,6 +245,7 @@ print("Text Example =", item.text_example.value)
 print("Timeline Example Start Date =", item.timeline_example.value.start)
 print("Timeline Example End Date =", item.timeline_example.value.end)
 print("Mirror Example = ", item.mirror_example.value)
+print("Long Text Example = ", item.long_text_example.value)
 ```
 
 ## Special Thanks

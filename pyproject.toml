@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "monday-item-parser"
-version = "0.2.7"
+version = "0.2.8"
 description = "monday-item-parser is a library used to define Monday items structure in a specific board, and lets the user fetch, create, update and delete items from this board."
 readme = "README.md"
 authors = ["Aviv Atedgi <aviv.atedgi2000@gmail.com>"]
