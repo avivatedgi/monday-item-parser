@@ -32,6 +32,14 @@ pip install monday-item-parser
 * 0.1.1 (2021-01-13) - Still first release, but got some problems with PyPI and Github Workflows
 * 0.1.0 (2021-01-13) - First release
 
+## Todo List
+
+* [ ] Create `fetch_groups` function to an item that returns the id along with the group title
+* [ ] Add to the `create_item` function the option to add the item to a group by its title, not by id
+* [ ] Add custom exceptions for common errors:
+  * [ ] Budget Exhausted Error
+  * [ ] Invalid Group Id (in item creation)
+
 ## How to use
 
 ### Items
