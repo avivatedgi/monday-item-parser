@@ -44,6 +44,7 @@ class ItemExample(Item, monday_client=client, board_id=testing_board_id):
     text_example = TextField
     timeline_example = TimelineField
     long_text_example = LongTextField
+    dropdown_example = DropdownField
 
 
 def test_change_item_attribute():
@@ -102,6 +103,7 @@ def test_create_item_then_duplicate_it_and_update_it():
     item.timeline_example.value.start = datetime.strptime("2000-05-01", "%Y-%m-%d")
     item.timeline_example.value.end = datetime.now()
     item.long_text_example.value = "My Cool Long Text Example"
+    item.dropdown_example.value = ["Hello", "World"]
     retry_in_case_of_budget_exhausted(lambda: item.create_item("topics"))
 
     new_item = retry_in_case_of_budget_exhausted(item.duplicate_item)
@@ -122,6 +124,7 @@ def test_create_item_then_duplicate_it_and_update_it():
         end=datetime.now(),
     )
     new_item.long_text_example = "Hello\nWorld"
+    new_item.dropdown_example = ["I'm", "Groot :)"]
     retry_in_case_of_budget_exhausted(new_item.update_item)
     time.sleep(60)
 
@@ -129,14 +132,55 @@ def test_create_item_then_duplicate_it_and_update_it():
 @pytest.mark.parametrize(
     "column_id,column_value",
     [
+        ("status_example", "Working on it"),
+        ("date_example", datetime.strptime("2000-05-01", "%Y-%m-%d")),
+        ("country_example", "IL"),
+        ("email_example", "aviv.atedgi2000@gmail.com"),
+        ("link_example", Link(text="My Github Profile")),
+        ("numbers_example", 192.4),
+        ("phone_example", Phone(phone="0501234567", country_code="IL")),
+        ("text_example", "My Cool Text Example"),
+        (
+            "timeline_example",
+            Timeline(
+                start=datetime.strptime("2000-05-01", "%Y-%m-%d"),
+                end=datetime.now(),
+            ),
+        ),
+        ("long_text_example", "My Cool Long Text Example"),
+    ],
+)
+def test_aviv_get_items_by_column_value(column_id, column_value):
+    last_item = None
+    counter = 0
+
+    while True:
+        try:
+            for item in ItemExample.fetch_items_by_column_value(**{column_id: column_value}):
+                last_item = item
+                counter += 1
+
+            break
+
+        except MondayClientError as exc:
+            time_to_wait = is_budget_exhausted_in_exception(exc)
+            if time_to_wait is not None:
+                time.sleep(time_to_wait)
+
+    assert counter == 1
+    assert last_item.item_name == "Aviv Atedgi"
+
+
+@pytest.mark.parametrize(
+    "column_id,column_value",
+    [
         ("status_example", "Stuck"),
         ("date_example", datetime.now()),
-        # ("checkbox_example", None), # Unsupported field
         ("country_example", "US"),
         ("email_example", "omrisiniver@gmail.com"),
         ("link_example", Link(text="Google It")),
         ("numbers_example", 154),
-        ("phone_example", Phone(phone="12123123123")),
+        ("phone_example", Phone(phone="12123123123", country_code="US")),
         ("text_example", "YES"),
         (
             "timeline_example",
@@ -148,7 +192,7 @@ def test_create_item_then_duplicate_it_and_update_it():
         ("long_text_example", "Hello\nWorld"),
     ],
 )
-def test_get_items_by_column_value(column_id, column_value):
+def test_sini_get_items_by_column_value(column_id, column_value):
     last_item = None
     counter = 0
 
@@ -177,3 +221,11 @@ def test_fetch_group_ids():
 def test_fetch_items_and_delete():
     for item in retry_in_case_of_budget_exhausted(ItemExample.fetch_items_from_board):
         retry_in_case_of_budget_exhausted(item.delete_item)
+
+
+def test_no_items():
+    counter = 0
+    for _ in retry_in_case_of_budget_exhausted(ItemExample.fetch_items_from_board):
+        counter += 1
+
+    assert counter == 0

@@ -35,9 +35,7 @@ class Field(abc.ABC):
         """
 
         raise AttributeError(
-            "items_by_column_value is not supported for {}".format(
-                self.__class__.__qualname__
-            )
+            "items_by_column_value is not supported for {}".format(self.__class__.__qualname__)
         )
 
     @property

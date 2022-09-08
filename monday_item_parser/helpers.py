@@ -13,9 +13,6 @@ def as_obj(obj):
 
 def raise_monday_errors(response):
     if isinstance(response, dict) and "errors" in response:
-        errors = [
-            error["message"] if "message" in error else error
-            for error in response["errors"]
-        ]
+        errors = [error["message"] if "message" in error else error for error in response["errors"]]
 
         raise MondayClientError("Got error from monday client", errors)

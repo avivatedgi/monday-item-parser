@@ -48,9 +48,7 @@ class ItemMeta(type):
         # Validate that all of the attribute names are valid
         for field_name, field_obj in attributes.items():
             if field_name in ItemMeta.__invalid_attribute_names__:
-                raise AttributeError(
-                    f"Attribute name {field_name} is invalid for an Item derive!"
-                )
+                raise AttributeError(f"Attribute name {field_name} is invalid for an Item derive!")
 
         # If metaclass isn't running for the class `Item` itself
         # it must include `monday_client` and `board_id` as parameters
@@ -60,9 +58,7 @@ class ItemMeta(type):
             )
 
         if not board_id:
-            raise AttributeError(
-                f"`board_id` must be provided as parameter for Item derived class `{name}`"
-            )
+            raise AttributeError(f"`board_id` must be provided as parameter for Item derived class `{name}`")
 
         attributes["_board_id"] = board_id
         attributes["_monday_client"] = monday_client
@@ -121,9 +117,7 @@ class ItemMeta(type):
         if not ignore_unused_fields:
             for field_name in attributes["_field_names"]:
                 if field_name not in attributes["_monday_field_names"]:
-                    raise AttributeError(
-                        f"'{name}::{field_name}' is declared but not used by the monday api"
-                    )
+                    raise AttributeError(f"'{name}::{field_name}' is declared but not used by the monday api")
 
         # Add some metadata for the monday fields to the attributes
         attributes["_item_name"] = None
@@ -150,9 +144,7 @@ class Item(metaclass=ItemMeta):
     @property
     def _changed_fields(self) -> Iterable[Field]:
         return (
-            name
-            for name in self._field_names
-            if getattr(self, name).value != self._backup_fields[name].value
+            name for name in self._field_names if getattr(self, name).value != self._backup_fields[name].value
         )
 
     @property
@@ -180,9 +172,7 @@ class Item(metaclass=ItemMeta):
         if len(args) != len(positional_args):
             raise ValueError(
                 "Invalid arguments were passed to the superclass. "
-                "Expected arguments: {} but {} given.".format(
-                    positional_args, len(args)
-                )
+                "Expected arguments: {} but {} given.".format(positional_args, len(args))
             )
 
         # Deepcopy the fields so different instances of Item have unique fields
@@ -191,9 +181,7 @@ class Item(metaclass=ItemMeta):
 
         for k, v in kwargs.items():
             if k not in self._field_names:
-                raise ValueError(
-                    "Unexpected keyword argument given: {}={}".format(k, v)
-                )
+                raise ValueError("Unexpected keyword argument given: {}={}".format(k, v))
 
             setattr(self, k, v)
 
@@ -211,18 +199,11 @@ class Item(metaclass=ItemMeta):
         for name, field in self:
             if isinstance(field, Item):
                 x.append("\t{} ({}):".format(name, field.__class__.__qualname__))
-                x.extend(
-                    "\t{}".format(field_str)
-                    for field_str in str(field).splitlines()[1:]
-                )
+                x.extend("\t{}".format(field_str) for field_str in str(field).splitlines()[1:])
             else:
-                name_and_id = "\t{} <\x1b[33m{}\x1b[0m>: ".format(
-                    name, self._monday_field_names[name]
-                )
+                name_and_id = "\t{} <\x1b[33m{}\x1b[0m>: ".format(name, self._monday_field_names[name])
 
-                value = "\x1b[33m{}\x1b[0m({})".format(
-                    field.__class__.__qualname__, str(field)
-                )
+                value = "\x1b[33m{}\x1b[0m({})".format(field.__class__.__qualname__, str(field))
 
                 x.append("{}{}".format(name_and_id.ljust(48), value))
 
@@ -288,9 +269,7 @@ class Item(metaclass=ItemMeta):
 
     def duplicate_item(self) -> Item:
         if not self._item_id:
-            raise AttributeError(
-                f"Can not duplicate item that wasn't fetched from the server"
-            )
+            raise AttributeError(f"Can not duplicate item that wasn't fetched from the server")
 
         item = copy.deepcopy(self)
         item._item_id = None
@@ -310,7 +289,7 @@ class Item(metaclass=ItemMeta):
 
         # Create the item
         response = self._monday_client.items.create_item(
-            self._board_id, group_id, self._unsaved_item_name, column_values
+            self._board_id, group_id, self._unsaved_item_name, column_values, create_labels_if_missing=True
         )
 
         # Check if the request succeed
@@ -340,9 +319,7 @@ class Item(metaclass=ItemMeta):
 
         # Get all the changed fields data (we wan't to update only what we change, not everything)
         column_values = {
-            self._monday_field_names[field_name]: getattr(
-                self, field_name
-            ).to_monday_dict()
+            self._monday_field_names[field_name]: getattr(self, field_name).to_monday_dict()
             for field_name in self._changed_fields
             if getattr(self, field_name).to_monday_dict() is not None
         }
@@ -352,7 +329,7 @@ class Item(metaclass=ItemMeta):
 
         # Update the item in the monday board
         data = self._monday_client.items.change_multiple_column_values(
-            self._board_id, self.item_id, column_values
+            self._board_id, self.item_id, column_values, create_labels_if_missing=True
         )
         raise_monday_errors(data)
 
@@ -406,16 +383,12 @@ class Item(metaclass=ItemMeta):
 
             # Load the data from the monday dictionary
             if not using_text:
-                column_value = (
-                    json.loads(column_data["value"]) if column_data["value"] else None
-                )
+                column_value = json.loads(column_data["value"]) if column_data["value"] else None
 
             getattr(obj, attribute_name).from_monday_dict(column_value)
 
             # Create a backup so we will know what have been changed
-            obj._backup_fields[attribute_name] = copy.deepcopy(
-                getattr(obj, attribute_name)
-            )
+            obj._backup_fields[attribute_name] = copy.deepcopy(getattr(obj, attribute_name))
 
         return obj
 
@@ -440,9 +413,7 @@ class Item(metaclass=ItemMeta):
         field_copy.value = field_value
         data = field_copy.search_representation()
 
-        items_data = cls._monday_client.items.fetch_items_by_column_value(
-            cls._board_id, monday_id, data
-        )
+        items_data = cls._monday_client.items.fetch_items_by_column_value(cls._board_id, monday_id, data)
 
         # Check if the request succeed
         raise_monday_errors(items_data)
