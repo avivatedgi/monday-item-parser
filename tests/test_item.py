@@ -45,6 +45,7 @@ class ItemExample(Item, monday_client=client, board_id=testing_board_id):
     timeline_example = TimelineField
     long_text_example = LongTextField
     dropdown_example = DropdownField
+    location_example = LocationField
 
 
 def test_change_item_attribute():
@@ -104,6 +105,9 @@ def test_create_item_then_duplicate_it_and_update_it():
     item.timeline_example.value.end = datetime.now()
     item.long_text_example.value = "My Cool Long Text Example"
     item.dropdown_example.value = ["Hello", "World"]
+    item.location_example.value.lat = 40.78274964253745
+    item.location_example.value.lng = -73.96559413145633
+    item.location_example.value.address = "Central Park, New York"
     retry_in_case_of_budget_exhausted(lambda: item.create_item("topics"))
 
     new_item = retry_in_case_of_budget_exhausted(item.duplicate_item)
@@ -125,6 +129,7 @@ def test_create_item_then_duplicate_it_and_update_it():
     )
     new_item.long_text_example = "Hello\nWorld"
     new_item.dropdown_example = ["I'm", "Groot :)"]
+    new_item.location_example = LocationField(lat=40.72767554383539, lng=-74.00196067135249, address="12 Chairs Cafe")
     retry_in_case_of_budget_exhausted(new_item.update_item)
     time.sleep(60)
 

@@ -1,18 +1,24 @@
 [tool.poetry]
 name = "monday-item-parser"
-version = "0.2.10"
+version = "0.2.11"
 description = "monday-item-parser is a library used to define Monday items structure in a specific board, and lets the user fetch, create, update and delete items from this board."
 readme = "README.md"
 authors = ["Aviv Atedgi <aviv.atedgi2000@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = ">=3.9,<3.13"
 monday = "^1.2.7"
 bidict = "^0.21.4"
 requests = "^2.27.1"
+dataclasses-json = "^0.5.14"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = "^6.2.5"
+ipython = "^8.14.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^6.2.5"
+ipython = "^8.14.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

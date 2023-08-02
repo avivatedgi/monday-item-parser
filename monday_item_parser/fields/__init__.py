@@ -13,6 +13,7 @@ from .text import TextField, LongTextField
 from .timeline import TimelineField, Timeline
 from .mirror import MirrorField
 from .dropdown import DropdownField
+from .location import LocationField, Location, City, Country
 
 __all__ = [
     "Field",
@@ -20,20 +21,16 @@ __all__ = [
     "CountryField",
     "DateField",
     "EmailField",
-    "LinkField",
-    "Link",
+    "LinkField", "Link",
     "NumberField",
-    "PeopleField",
-    "Person",
-    "Team",
-    "PhoneField",
-    "Phone",
+    "PeopleField", "Person", "Team",
+    "PhoneField", "Phone",
     "StatusField",
     "TagsField",
     "TextField",
     "LongTextField",
-    "TimelineField",
-    "Timeline",
+    "TimelineField", "Timeline",
     "MirrorField",
     "DropdownField",
+    "LocationField", "Location", "City", "Country",
 ]
