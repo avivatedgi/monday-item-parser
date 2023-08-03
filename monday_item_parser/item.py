@@ -21,6 +21,7 @@ class ItemMeta(type):
         "_board_id",
         "_monday_field_names",
         "_group_id",
+        "_group_title",
         "_item_name",
         "_item_id",
         "_unsaved_item_name",
@@ -123,6 +124,7 @@ class ItemMeta(type):
         attributes["_item_name"] = None
         attributes["_item_id"] = None
         attributes["_group_id"] = None
+        attributes["_group_title"] = None
         attributes["_unsaved_item_name"] = None
         attributes["_updated_fields"] = []
 
@@ -139,6 +141,7 @@ class Item(metaclass=ItemMeta):
     _item_id: int
     _unsaved_item_name: str
     _group_id: str
+    _group_title: str
     _frozen: bool
 
     @property
@@ -193,7 +196,7 @@ class Item(metaclass=ItemMeta):
     def __str__(self):
         x = [
             f"\x1b[32m{self.__class__.__qualname__}\x1b[0m "
-            f"(\x1b[32mId:\x1b[0m {self._item_id} | \x1b[32mName:\x1b[0m {self._item_name} | \x1b[32mGroup Id:\x1b[0m {self._group_id}):"
+            f"(\x1b[32mId:\x1b[0m {self._item_id} | \x1b[32mName:\x1b[0m {self._item_name} | \x1b[32mGroup:\x1b[0m {self._group_title} <{self._group_id}>):"
         ]
 
         for name, field in self:
@@ -266,6 +269,10 @@ class Item(metaclass=ItemMeta):
     @property
     def group_id(self):
         return self._group_id
+    
+    @property
+    def group_title(self):
+        return self._group_title
 
     def duplicate_item(self) -> Item:
         if not self._item_id:
@@ -363,6 +370,7 @@ class Item(metaclass=ItemMeta):
         obj._item_name = data["name"]
         obj._unsaved_item_name = None
         obj._group_id = data["group"]["id"]
+        obj._group_title = data["group"]["title"]
 
         for column_data in data["column_values"]:
             monday_id = column_data["id"]
@@ -430,6 +438,16 @@ class Item(metaclass=ItemMeta):
 
         for group in groups_data["data"]["boards"][0]["groups"]:
             yield group["id"]
+
+    @classmethod
+    def fetch_groups(cls) -> Iterator[dict]:
+        groups_data = cls._monday_client.groups.get_groups_by_board([cls._board_id])
+
+        # Check if the request succeed
+        raise_monday_errors(groups_data)
+
+        for group in groups_data["data"]["boards"][0]["groups"]:
+            yield group["id"], group["title"]
 
     def invoke_field_update_hooks(self, field: Field):
         for f in getattr(field, "_value_update_hooks", ()):
