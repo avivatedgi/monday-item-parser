@@ -19,6 +19,7 @@ pip install monday-item-parser
 
 ## Changelog
 
+* 0.2.14 (2023-08-03) - Added support for the StatusLabelField (like the StatusField but work with the `label` of the status instead of the `index`)
 * 0.2.13 (2023-08-03) - Added support for fetching group titles, and added the `group_title` to the `Item` class
 * 0.2.12 (2023-08-03) - Added support for the Location field
 * 0.2.10 (2022-09-08) - Added support for the Dropdown field and updated the monday library version

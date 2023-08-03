@@ -21,6 +21,8 @@ class StatusField(Field):
         if not data:
             self.value = None
             return
+        
+        print(data)
 
         for key in StatusField.__type_to_field_name__.values():
             if key in data:
@@ -42,4 +44,29 @@ class StatusField(Field):
         elif isinstance(self.value, int):
             raise TypeError("Can not search statuses by indexes, only by labels")
 
+        return str(self.value)
+
+
+class StatusLabelField(Field):
+    __monday_field_type__ = "color"
+    __use_text_instead_of_value__ = True
+
+    def __init__(self, value: str = None):
+        self.value = value
+
+    def to_monday_dict(self):
+        return {
+            "label": self.value
+        }
+
+    def from_monday_dict(self, data: Dict[str, Any]):
+        self.value = data
+
+    def __str__(self):
+        if self.value is None:
+            return str(None)
+
+        return f"label: {self.value}"
+
+    def search_representation(self) -> str:
         return str(self.value)

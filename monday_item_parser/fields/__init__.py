@@ -7,7 +7,7 @@ from .link import LinkField, Link
 from .number import NumberField
 from .people import PeopleField, Person, Team
 from .phone import PhoneField, Phone
-from .status import StatusField
+from .status import StatusField, StatusLabelField
 from .tags import TagsField
 from .text import TextField, LongTextField
 from .timeline import TimelineField, Timeline
@@ -25,7 +25,7 @@ __all__ = [
     "NumberField",
     "PeopleField", "Person", "Team",
     "PhoneField", "Phone",
-    "StatusField",
+    "StatusField", "StatusLabelField",
     "TagsField",
     "TextField",
     "LongTextField",
