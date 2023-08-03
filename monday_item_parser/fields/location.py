@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Self
 from dataclasses_json import dataclass_json, LetterCase
 
 from .field import Field
@@ -43,7 +42,7 @@ class Location:
     street_number_short: str | None = None
     text: str | None = None
 
-    def from_monday_dict(self, data: dict[str, str]) -> Self:
+    def from_monday_dict(self, data: dict[str, str]):
         self.address = data.get("address", None) if data else None
         self.city = City().from_monday_dict(data.get("city", None)) if data else None
         self.country = Country().from_monday_dict(data.get("country", None)) if data else None
