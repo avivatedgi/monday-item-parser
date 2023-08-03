@@ -12,7 +12,7 @@ from .tags import TagsField
 from .text import TextField, LongTextField
 from .timeline import TimelineField, Timeline
 from .mirror import MirrorField
-from .dropdown import DropdownField
+from .dropdown import DropdownField, DropdownLabelField
 from .location import LocationField, Location, City, Country
 
 __all__ = [
@@ -31,6 +31,6 @@ __all__ = [
     "LongTextField",
     "TimelineField", "Timeline",
     "MirrorField",
-    "DropdownField",
+    "DropdownField", "DropdownLabelField",
     "LocationField", "Location", "City", "Country",
 ]
